@@ -128,15 +128,14 @@ public class ImapService implements IMailService {
      */
     private boolean listFolderMessage(List<MailItem> target, List<String> existUids, IMAPFolder imapFolder, Integer MAX_NUMBER) throws MessagingException {
         boolean flag = false;
-        imapFolder.open(Folder.READ_ONLY);
-        //Message[] messages = imapFolder.getMessages();
-        Message[] messages = imapFolder.getMessages(0, MAX_NUMBER);
+        imapFolder.open(Folder.READ_WRITE);
+        Message[] messages = imapFolder.getMessages();
         for (int j = messages.length - 1; j >= 0; j--) {
             //if (!existUids.contains(String.valueOf(imapFolder.getFullName() + imapFolder.getUID(messages[j])))) {
             if (!existUids.contains(String.valueOf(imapFolder.getFullName() + messages[j].getMessageNumber()))) {
                 target.add(MailItem.builder().imapMessage((IMAPMessage) messages[j]).build());
             }
-            flag = target.size() == MAX_SYNCHRO_SIZE;
+            flag = target.size() == MAX_NUMBER;
             if (flag) {
                 break;
             }
