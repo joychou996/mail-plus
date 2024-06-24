@@ -13,6 +13,7 @@ import com.github.zeemood.mail.plus.enums.ProxyTypeEnum;
 import com.github.zeemood.mail.plus.utils.MailItemParser;
 
 import javax.mail.*;
+import javax.mail.search.FlagTerm;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -129,7 +130,9 @@ public class ImapService implements IMailService {
     private boolean listFolderMessage(List<MailItem> target, List<String> existUids, IMAPFolder imapFolder, Integer MAX_NUMBER) throws MessagingException {
         boolean flag = false;
         imapFolder.open(Folder.READ_WRITE);
-        Message[] messages = imapFolder.getMessages();
+        //Message[] messages = imapFolder.getMessages();
+        //读取只未读取的邮件
+        Message[] messages = imapFolder.search(new FlagTerm(new Flags(Flags.Flag.SEEN), false));
         for (int j = messages.length - 1; j >= 0; j--) {
             //if (!existUids.contains(String.valueOf(imapFolder.getFullName() + imapFolder.getUID(messages[j])))) {
             if (!existUids.contains(String.valueOf(imapFolder.getFullName() + messages[j].getMessageNumber()))) {
