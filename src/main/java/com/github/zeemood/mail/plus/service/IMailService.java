@@ -34,7 +34,7 @@ public interface IMailService {
      * @return
      * @throws MailPlusException
      */
-    List<MailItem> listAll(MailConn mailConn, List<String> existUids) throws MailPlusException;
+    List<MailItem> listAll(MailConn mailConn, List<String> existUids, Integer MAX_NUMBER) throws MailPlusException;
 
     /**
      * 连接服务器

@@ -48,7 +48,7 @@ public class ImapService implements IMailService {
     /**
      * 解析邮件
      *
-     * @param mailItem 邮箱列表项
+     * @param mailItem      邮箱列表项
      * @param localSavePath 本地存储路径
      * @return
      * @throws MailPlusException
@@ -61,13 +61,13 @@ public class ImapService implements IMailService {
     /**
      * 列举需要被同步的邮件
      *
-     * @param mailConn 邮箱连接，可以做成这个类的字段
+     * @param mailConn  邮箱连接，可以做成这个类的字段
      * @param existUids 已同步的邮件uid
      * @return
      * @throws MailPlusException
      */
     @Override
-    public List<MailItem> listAll(MailConn mailConn, List<String> existUids) throws MailPlusException {
+    public List<MailItem> listAll(MailConn mailConn, List<String> existUids, Integer MAX_NUMBER) throws MailPlusException {
         IMAPStore imapStore = mailConn.getImapStore();
         try {
             Folder defaultFolder = imapStore.getDefaultFolder();
@@ -81,7 +81,7 @@ public class ImapService implements IMailService {
                 if (imapFolder.getName().equalsIgnoreCase("[gmail]")) {
                     flag = listGmailMessageFolder(mailItems, existUids, imapFolder);
                 } else {
-                    flag = listFolderMessage(mailItems, existUids, imapFolder);
+                    flag = listFolderMessage(mailItems, existUids, imapFolder, MAX_NUMBER);
                 }
                 //已达到数目，直接退出循环
                 if (flag) {
@@ -109,7 +109,7 @@ public class ImapService implements IMailService {
         boolean flag = false;
         for (Folder folder :
                 list) {
-            flag = listFolderMessage(target, existUids, (IMAPFolder) folder);
+            flag = listFolderMessage(target, existUids, (IMAPFolder) folder, 100);
             if (flag) {
                 break;
             }
@@ -126,12 +126,14 @@ public class ImapService implements IMailService {
      * @return
      * @throws MessagingException
      */
-    private boolean listFolderMessage(List<MailItem> target, List<String> existUids, IMAPFolder imapFolder) throws MessagingException {
+    private boolean listFolderMessage(List<MailItem> target, List<String> existUids, IMAPFolder imapFolder, Integer MAX_NUMBER) throws MessagingException {
         boolean flag = false;
         imapFolder.open(Folder.READ_ONLY);
-        Message[] messages = imapFolder.getMessages();
+        //Message[] messages = imapFolder.getMessages();
+        Message[] messages = imapFolder.getMessages(0, MAX_NUMBER);
         for (int j = messages.length - 1; j >= 0; j--) {
-            if (!existUids.contains(String.valueOf(imapFolder.getFullName() + imapFolder.getUID(messages[j])))) {
+            //if (!existUids.contains(String.valueOf(imapFolder.getFullName() + imapFolder.getUID(messages[j])))) {
+            if (!existUids.contains(String.valueOf(imapFolder.getFullName() + messages[j].getMessageNumber()))) {
                 target.add(MailItem.builder().imapMessage((IMAPMessage) messages[j]).build());
             }
             flag = target.size() == MAX_SYNCHRO_SIZE;

@@ -60,7 +60,7 @@ public class MyExchangeService implements IMailService {
      * @throws MailPlusException
      */
     @Override
-    public List<MailItem> listAll(MailConn mailConn, List<String> existUids) throws MailPlusException {
+    public List<MailItem> listAll(MailConn mailConn, List<String> existUids, Integer MAX_NUMBER) throws MailPlusException {
         ExchangeService exchangeService = mailConn.getExchangeService();
         try {
             Folder msgFolderRoot = Folder.bind(exchangeService, WellKnownFolderName.MsgFolderRoot);

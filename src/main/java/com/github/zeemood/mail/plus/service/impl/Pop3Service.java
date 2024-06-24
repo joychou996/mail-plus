@@ -69,7 +69,7 @@ public class Pop3Service implements IMailService {
      * @throws MailPlusException
      */
     @Override
-    public List<MailItem> listAll(MailConn mailConn, List<String> existUids) throws MailPlusException {
+    public List<MailItem> listAll(MailConn mailConn, List<String> existUids, Integer MAX_NUMBER) throws MailPlusException {
         POP3Store pop3Store = mailConn.getPop3Store();
         try {
             //获取文件夹，POP3只能获取收件箱的邮件
