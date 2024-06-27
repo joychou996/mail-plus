@@ -1,0 +1,15 @@
+F:\myprojects\github\mail-plus\src\main\java\com\github\zeemood\mail\plus\service\exception\MailPlusException.java
+F:\myprojects\github\mail-plus\src\main\java\com\github\zeemood\mail\plus\service\impl\ImapService.java
+F:\myprojects\github\mail-plus\src\main\java\com\github\zeemood\mail\plus\service\IMailService.java
+F:\myprojects\github\mail-plus\src\main\java\com\github\zeemood\mail\plus\domain\UniversalAttachment.java
+F:\myprojects\github\mail-plus\src\main\java\com\github\zeemood\mail\plus\domain\UniversalRecipient.java
+F:\myprojects\github\mail-plus\src\main\java\com\github\zeemood\mail\plus\enums\ProxyTypeEnum.java
+F:\myprojects\github\mail-plus\src\main\java\com\github\zeemood\mail\plus\service\impl\MyExchangeService.java
+F:\myprojects\github\mail-plus\src\main\java\com\github\zeemood\mail\plus\domain\MailConn.java
+F:\myprojects\github\mail-plus\src\main\java\com\github\zeemood\mail\plus\domain\MailItem.java
+F:\myprojects\github\mail-plus\src\main\java\com\github\zeemood\mail\plus\service\impl\Pop3Service.java
+F:\myprojects\github\mail-plus\src\main\java\com\github\zeemood\mail\plus\App.java
+F:\myprojects\github\mail-plus\src\main\java\com\github\zeemood\mail\plus\domain\UniversalMail.java
+F:\myprojects\github\mail-plus\src\main\java\com\github\zeemood\mail\plus\utils\EmailSender.java
+F:\myprojects\github\mail-plus\src\main\java\com\github\zeemood\mail\plus\utils\MailItemParser.java
+F:\myprojects\github\mail-plus\src\main\java\com\github\zeemood\mail\plus\domain\MailConnCfg.java
