@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+
 /**
  * IMAP4协议邮箱收取类
  *
@@ -71,24 +72,35 @@ public class ImapService implements IMailService {
     public List<MailItem> listAll(MailConn mailConn, List<String> existUids, Integer MAX_NUMBER) throws MailPlusException {
         IMAPStore imapStore = mailConn.getImapStore();
         try {
-            Folder defaultFolder = imapStore.getDefaultFolder();
+
+            //只从收件箱中收取，所以必须白名单
+            Folder defaultFolder = imapStore.getFolder("INBOX");
             List<MailItem> mailItems = new ArrayList<>();
-            Folder[] list = defaultFolder.list();
-            //判断是否达到一定数量的标志（使用双层循环）
-            boolean flag = false;
-            for (int i = 0; i < list.length; i++) {
-                IMAPFolder imapFolder = (IMAPFolder) list[i];
-                //Gmail额外分层
-                if (imapFolder.getName().equalsIgnoreCase("[gmail]")) {
-                    flag = listGmailMessageFolder(mailItems, existUids, imapFolder);
-                } else {
-                    flag = listFolderMessage(mailItems, existUids, imapFolder, MAX_NUMBER);
-                }
-                //已达到数目，直接退出循环
-                if (flag) {
-                    break;
-                }
+            IMAPFolder imapFolder = (IMAPFolder) defaultFolder;
+            //Gmail额外分层
+            if (imapFolder.getName().equalsIgnoreCase("[gmail]")) {
+                listGmailMessageFolder(mailItems, existUids, imapFolder);
+            } else {
+                listFolderMessage(mailItems, existUids, imapFolder, MAX_NUMBER);
             }
+
+            //Folder defaultFolder = imapStore.getDefaultFolder();
+//            Folder[] list = defaultFolder.list();
+//            //判断是否达到一定数量的标志（使用双层循环）
+//            boolean flag = false;
+//            for (int i = 0; i < list.length; i++) {
+//                IMAPFolder imapFolder = (IMAPFolder) list[i];
+//                //Gmail额外分层
+//                if (imapFolder.getName().equalsIgnoreCase("[gmail]")) {
+//                    flag = listGmailMessageFolder(mailItems, existUids, imapFolder);
+//                } else {
+//                    flag = listFolderMessage(mailItems, existUids, imapFolder, MAX_NUMBER);
+//                }
+//                //已达到数目，直接退出循环
+//                if (flag) {
+//                    break;
+//                }
+//            }
             return mailItems;
         } catch (MessagingException e) {
             e.printStackTrace();
