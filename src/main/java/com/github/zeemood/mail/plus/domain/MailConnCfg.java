@@ -68,6 +68,8 @@ public class MailConnCfg {
      */
     private Integer socksProxyPort;
 
+    Boolean isDebugger;
+
     public MailConnCfg(String email, String password, String host, Integer port) {
         this.email = email;
         this.password = password;

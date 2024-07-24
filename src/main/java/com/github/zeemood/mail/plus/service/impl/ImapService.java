@@ -178,6 +178,9 @@ public class ImapService implements IMailService {
         }
         //构建session
         Session session = Session.getInstance(properties);
+        if (mailConnCfg.getIsDebugger()) {
+            session.setDebug(true);
+        }
         try {
             //连接
             Store store = session.getStore("imap");
