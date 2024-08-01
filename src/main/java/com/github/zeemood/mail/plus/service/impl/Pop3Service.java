@@ -44,7 +44,7 @@ public class Pop3Service implements IMailService {
     /**
      * 一次性最多能同步的数量
      */
-    private static final int MAX_SYNCHRO_SIZE = 80;
+    private static final int MAX_SYNCHRO_SIZE = 40;
 
     /**
      * 解析邮件
