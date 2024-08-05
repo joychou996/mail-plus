@@ -63,7 +63,7 @@ public class Pop3Service implements IMailService {
 
     /**
      * 列举需要被同步的邮件
-     *
+     * 改快了
      * @param mailConn  邮箱连接，也可以做成字段
      * @param existUids 已存在的邮件uid
      * @return
