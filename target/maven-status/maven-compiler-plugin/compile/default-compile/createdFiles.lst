@@ -3,7 +3,6 @@ com\github\zeemood\mail\plus\domain\UniversalRecipient$UniversalRecipientBuilder
 com\github\zeemood\mail\plus\service\exception\MailPlusException.class
 com\github\zeemood\mail\plus\domain\MailItem.class
 com\github\zeemood\mail\plus\domain\UniversalMail$UniversalMailBuilder.class
-com\github\zeemood\mail\plus\service\impl\MyExchangeService.class
 com\github\zeemood\mail\plus\domain\MailConn$MailConnBuilder.class
 com\github\zeemood\mail\plus\domain\MailConnCfg$MailConnCfgBuilder.class
 com\github\zeemood\mail\plus\domain\MailConn.class

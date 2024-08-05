@@ -13,6 +13,7 @@ import com.github.zeemood.mail.plus.enums.ProxyTypeEnum;
 import com.github.zeemood.mail.plus.utils.MailItemParser;
 
 import javax.mail.*;
+import javax.mail.internet.MimeMessage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -69,31 +70,26 @@ public class Pop3Service implements IMailService {
      * @throws MailPlusException
      */
     @Override
-    public List<MailItem> listAll(MailConn mailConn, List<String> existUids, Integer MAX_NUMBER) throws MailPlusException {
+    public  Message[] listAll(MailConn mailConn, List<String> existUids, Integer MAX_NUMBER) throws MailPlusException {
         POP3Store pop3Store = mailConn.getPop3Store();
         try {
             //获取文件夹，POP3只能获取收件箱的邮件
             POP3Folder folder = (POP3Folder) pop3Store.getFolder(FOLDER_INBOX);
             //文件夹必须打开才可以获取邮件
             folder.open(Folder.READ_ONLY);
-            Message[] messages = folder.getMessages();
-            List<MailItem> mailItems = new ArrayList<>();
-            //进行去重筛选需要同步的邮件
-            for (int i = messages.length - 1; i >= 0; i--) {
-                String uid = folder.getUID(messages[i]);
-                if (!existUids.contains(uid)) {
-                    POP3Message pop3Message = (POP3Message) messages[i];
-                    mailItems.add(MailItem.builder().pop3Message(pop3Message).build());
-                }
-                //到一定数量停止
-                if (mailItems.size() == MAX_SYNCHRO_SIZE) {
-                    break;
-                }
-            }
-            return mailItems;
+            int messageCount = folder.getMessageCount();
+            int startIndex = Math.max(1, messageCount - MAX_NUMBER + 1); // 最近的100封邮件的起始索引
+            Message[] messages = folder.getMessages(startIndex, messageCount);
+//            List<MailItem> mailItems = new ArrayList<>();
+//            //进行去重筛选需要同步的邮件
+//            for (int i = 0; i < messages.length; i++) {
+//                POP3Message pop3Message = (POP3Message) messages[i];
+//                mailItems.add(MailItem.builder().pop3Message(pop3Message).build());
+//            }
+            return messages;
         } catch (MessagingException e) {
             e.printStackTrace();
-            throw new MailPlusException(String.format("【POP3服务】打开文件夹/获取邮件列表失败，错误信息【{}】"));
+            throw new MailPlusException(String.format("【POP3服务】打开文件夹/获取邮件列表失败，错误信息【{}】", e.getMessage()));
         }
     }
 

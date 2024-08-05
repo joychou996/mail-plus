@@ -15,6 +15,7 @@ import com.github.zeemood.mail.plus.utils.MailItemParser;
 import javax.mail.*;
 import javax.mail.search.FlagTerm;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -69,39 +70,23 @@ public class ImapService implements IMailService {
      * @throws MailPlusException
      */
     @Override
-    public List<MailItem> listAll(MailConn mailConn, List<String> existUids, Integer MAX_NUMBER) throws MailPlusException {
+    public Message[] listAll(MailConn mailConn, List<String> existUids, Integer MAX_NUMBER) throws MailPlusException {
         IMAPStore imapStore = mailConn.getImapStore();
         try {
 
             //只从收件箱中收取，所以必须白名单
             Folder defaultFolder = imapStore.getFolder("INBOX");
-            List<MailItem> mailItems = new ArrayList<>();
+            //List<MailItem> mailItems = new ArrayList<>();
+            Message[] messages = null;
             IMAPFolder imapFolder = (IMAPFolder) defaultFolder;
             //Gmail额外分层
             if (imapFolder.getName().equalsIgnoreCase("[gmail]")) {
-                listGmailMessageFolder(mailItems, existUids, imapFolder);
+                messages = listGmailMessageFolder(imapFolder);
             } else {
-                listFolderMessage(mailItems, existUids, imapFolder, MAX_NUMBER);
+                messages = listFolderMessage(imapFolder);
             }
 
-            //Folder defaultFolder = imapStore.getDefaultFolder();
-//            Folder[] list = defaultFolder.list();
-//            //判断是否达到一定数量的标志（使用双层循环）
-//            boolean flag = false;
-//            for (int i = 0; i < list.length; i++) {
-//                IMAPFolder imapFolder = (IMAPFolder) list[i];
-//                //Gmail额外分层
-//                if (imapFolder.getName().equalsIgnoreCase("[gmail]")) {
-//                    flag = listGmailMessageFolder(mailItems, existUids, imapFolder);
-//                } else {
-//                    flag = listFolderMessage(mailItems, existUids, imapFolder, MAX_NUMBER);
-//                }
-//                //已达到数目，直接退出循环
-//                if (flag) {
-//                    break;
-//                }
-//            }
-            return mailItems;
+            return messages;
         } catch (MessagingException e) {
             e.printStackTrace();
             throw new MailPlusException(String.format("【IMAP服务】打开文件夹/获取邮件列表失败，错误信息【{}】"));
@@ -117,17 +102,16 @@ public class ImapService implements IMailService {
      * @return
      * @throws MessagingException
      */
-    private boolean listGmailMessageFolder(List<MailItem> target, List<String> existUids, IMAPFolder imapFolder) throws MessagingException {
+    private Message[] listGmailMessageFolder(IMAPFolder imapFolder) throws MessagingException {
         Folder[] list = imapFolder.list();
-        boolean flag = false;
-        for (Folder folder :
-                list) {
-            flag = listFolderMessage(target, existUids, (IMAPFolder) folder, 100);
-            if (flag) {
-                break;
-            }
+        List<Message> messages = new ArrayList<>();
+        for (Folder folder : list) {
+            Message[] messages1 = listFolderMessage((IMAPFolder) folder);
+            //把数组转为list
+            List<Message> messages2 = Arrays.asList(messages1);
+            messages.addAll(messages2);
         }
-        return flag;
+        return messages.toArray(new Message[messages.size()]);
     }
 
     /**
@@ -139,23 +123,14 @@ public class ImapService implements IMailService {
      * @return
      * @throws MessagingException
      */
-    private boolean listFolderMessage(List<MailItem> target, List<String> existUids, IMAPFolder imapFolder, Integer MAX_NUMBER) throws MessagingException {
-        boolean flag = false;
+    private Message[] listFolderMessage(IMAPFolder imapFolder) throws MessagingException {
+
         imapFolder.open(Folder.READ_WRITE);
         //Message[] messages = imapFolder.getMessages();
         //读取只未读取的邮件
         Message[] messages = imapFolder.search(new FlagTerm(new Flags(Flags.Flag.SEEN), false));
-        for (int j = messages.length - 1; j >= 0; j--) {
-            //if (!existUids.contains(String.valueOf(imapFolder.getFullName() + imapFolder.getUID(messages[j])))) {
-            if (!existUids.contains(String.valueOf(imapFolder.getFullName() + messages[j].getMessageNumber()))) {
-                target.add(MailItem.builder().imapMessage((IMAPMessage) messages[j]).build());
-            }
-            flag = target.size() == MAX_NUMBER;
-            if (flag) {
-                break;
-            }
-        }
-        return flag;
+
+        return messages;
     }
 
     /**

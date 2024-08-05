@@ -6,6 +6,7 @@ import com.github.zeemood.mail.plus.domain.MailItem;
 import com.github.zeemood.mail.plus.domain.UniversalMail;
 import com.github.zeemood.mail.plus.service.exception.MailPlusException;
 
+import javax.mail.Message;
 import java.util.List;
 
 /**
@@ -34,7 +35,7 @@ public interface IMailService {
      * @return
      * @throws MailPlusException
      */
-    List<MailItem> listAll(MailConn mailConn, List<String> existUids, Integer MAX_NUMBER) throws MailPlusException;
+    Message[] listAll(MailConn mailConn, List<String> existUids, Integer MAX_NUMBER) throws MailPlusException;
 
     /**
      * 连接服务器
