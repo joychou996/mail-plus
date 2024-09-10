@@ -25,6 +25,7 @@ import java.util.Properties;
  * @date 2019/01/18
  */
 public class Pop3Service implements IMailService {
+
     /**
      * Session properties的键名
      */
@@ -64,13 +65,14 @@ public class Pop3Service implements IMailService {
     /**
      * 列举需要被同步的邮件
      * 改快了
+     *
      * @param mailConn  邮箱连接，也可以做成字段
      * @param existUids 已存在的邮件uid
      * @return
      * @throws MailPlusException
      */
     @Override
-    public  Message[] listAll(MailConn mailConn, List<String> existUids, Integer MAX_NUMBER) throws MailPlusException {
+    public Message[] listAll(MailConn mailConn, List<String> existUids, Integer MAX_NUMBER) throws MailPlusException {
         POP3Store pop3Store = mailConn.getPop3Store();
         try {
             //获取文件夹，POP3只能获取收件箱的邮件
@@ -78,7 +80,11 @@ public class Pop3Service implements IMailService {
             //文件夹必须打开才可以获取邮件
             folder.open(Folder.READ_ONLY);
             int messageCount = folder.getMessageCount();
+            System.out.println("总邮件：" + messageCount);
+
             int startIndex = Math.max(1, messageCount - MAX_NUMBER + 1); // 最近的100封邮件的起始索引
+
+            System.out.println("总邮件：" + messageCount + " 收取索引：" + startIndex);
             Message[] messages = folder.getMessages(startIndex, messageCount);
 //            List<MailItem> mailItems = new ArrayList<>();
 //            //进行去重筛选需要同步的邮件
