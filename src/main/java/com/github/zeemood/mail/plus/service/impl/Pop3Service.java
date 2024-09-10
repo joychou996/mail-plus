@@ -79,8 +79,9 @@ public class Pop3Service implements IMailService {
             POP3Folder folder = (POP3Folder) pop3Store.getFolder(FOLDER_INBOX);
             //文件夹必须打开才可以获取邮件
             folder.open(Folder.READ_ONLY);
+
             int messageCount = folder.getMessageCount();
-            System.out.println("总邮件：" + messageCount);
+            System.out.println("文件夹名称：" + folder.getName() + ",总邮件：" + messageCount);
 
             int startIndex = Math.max(1, messageCount - MAX_NUMBER + 1); // 最近的100封邮件的起始索引
 
